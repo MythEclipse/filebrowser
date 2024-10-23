@@ -1,19 +1,30 @@
 FROM alpine:latest
-RUN apk --update add ca-certificates \
+
+# Install necessary packages
+RUN apk --no-cache add ca-certificates \
                      mailcap \
                      curl \
                      jq
 
+# Copy healthcheck script and make it executable
 COPY healthcheck.sh /healthcheck.sh
 RUN chmod +x /healthcheck.sh
 
+# Set up healthcheck
 HEALTHCHECK --start-period=2s --interval=5s --timeout=3s \
     CMD /healthcheck.sh || exit 1
 
-VOLUME /srv
+# Create the /filebrowser directory
+RUN mkdir -p /filebrowser
+
+# Expose the necessary port
 EXPOSE 3030
 
+# Copy configuration file
 COPY docker_config.json /.filebrowser.json
-COPY . /filebrowser/  # This copies all files and directories from the current context to /filebrowser/
 
+# Copy all other files from the current directory to /filebrowser
+COPY . /filebrowser/
+
+# Set the entry point for the container
 ENTRYPOINT [ "/filebrowser" ]
