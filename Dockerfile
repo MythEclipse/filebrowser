@@ -14,6 +14,6 @@ VOLUME /srv
 EXPOSE 3030
 
 COPY docker_config.json /.filebrowser.json
-COPY . /filebrowser  /filebrowser
+COPY ./filebrowser  /filebrowser
 
 ENTRYPOINT [ "/filebrowser" ]
